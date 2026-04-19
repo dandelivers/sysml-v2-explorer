@@ -1,18 +1,17 @@
 .editor-sidebar {
   flex-shrink: 0;
-  width: 320px;
+  width: 340px;
   max-width: 0;
   overflow: hidden;
-  background: #1e1e1e;
+  background: #0d1117;
   display: flex;
   flex-direction: column;
-  border-right: 1.5px solid #444;
-  box-shadow: 6px 0 24px rgba(0, 0, 0, 0.35);
-  transition: max-width 0.2s ease;
+  border-right: 1px solid var(--border);
+  transition: max-width 0.22s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .editor-sidebar.open {
-  max-width: 320px;
+  max-width: 340px;
 }
 
 /* ── Sidebar header ── */
@@ -21,47 +20,48 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 0 10px 0 14px;
-  height: 36px;
-  background: #252526;
-  border-bottom: 1px solid #333;
+  padding: 0 12px 0 16px;
+  height: 40px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
   flex-shrink: 0;
 }
 
 .sidebar-title {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 600;
-  color: #858585;
-  letter-spacing: 1px;
+  color: var(--text);
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  font-family: ui-monospace, monospace;
+  font-family: var(--mono);
   flex: 1;
 }
 
 .sidebar-save-dot {
-  width: 7px;
-  height: 7px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   flex-shrink: 0;
   transition: background 0.3s;
 }
-.sidebar-save-dot.saved  { background: #27ae60; }
-.sidebar-save-dot.saving { background: #888; }
+.sidebar-save-dot.saved  { background: #22c55e; }
+.sidebar-save-dot.saving { background: var(--text-dim); }
 
 .sidebar-close {
   background: none;
   border: none;
-  color: #858585;
-  font-size: 13px;
+  color: var(--text);
+  font-size: 16px;
   cursor: pointer;
   padding: 4px 6px;
-  border-radius: 3px;
+  border-radius: 4px;
   line-height: 1;
   transition: color 0.15s, background 0.15s;
+  font-family: var(--sans);
 }
 .sidebar-close:hover {
-  color: #ccc;
-  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-h);
+  background: var(--surface-3);
 }
 
 /* ── Editor area ── */

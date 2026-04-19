@@ -18,9 +18,9 @@ const TOTAL_W      = STRUCT_COL_X + STRUCT_W + 20;
 
 // ── Colours ───────────────────────────────────────────────────────────────────
 
-const REQ_C    = { bg:"#fef9e7", border:"#c8a84b", text:"#7d6608", header:"#d4ac0d" };
-const FN_C     = { bg:"#eafaf1", border:"#27ae60", text:"#145a32", header:"#1e8449" };
-const STRUCT_C = { bg:"#eaf4fb", border:"#2e86c1", text:"#154360", header:"#1a6fa0" };
+const REQ_C    = { bg:"rgba(59,130,246,0.08)",  border:"rgba(59,130,246,0.25)",  text:"#93c5fd", header:"#3b82f6" };
+const FN_C     = { bg:"rgba(16,185,129,0.08)",  border:"rgba(16,185,129,0.25)",  text:"#6ee7b7", header:"#10b981" };
+const STRUCT_C = { bg:"rgba(6,182,212,0.08)",   border:"rgba(6,182,212,0.25)",   text:"#67e8f9", header:"#06b6d4" };
 
 // ── Build function data ───────────────────────────────────────────────────────
 
@@ -92,28 +92,28 @@ function SideChip({ item, x, y, w, h, cfg, active, side }) {
   return (
     <g>
       <rect x={x} y={y} width={w} height={h} rx={4}
-        fill={active ? cfg.bg : "#fff"}
-        stroke={active ? cfg.border : cfg.border + "66"}
+        fill={active ? cfg.bg : "#0f0f0f99"}
+        stroke={active ? cfg.border : cfg.border + "55"}
         strokeWidth={active ? 1.5 : 1}/>
 
       {/* Keyword tag */}
       <text x={x + (side === "left" ? w - 4 : 4)}
         y={y + 12} textAnchor={side === "left" ? "end" : "start"}
-        fontSize={7.5} fontFamily="Arial,sans-serif"
-        fill={active ? cfg.text : cfg.text + "88"} fontStyle="italic">
+        fontSize={7.5} fontFamily="'JetBrains Mono',monospace"
+        fill={active ? cfg.text : cfg.text + "55"} fontStyle="italic">
         {node.kw}
       </text>
 
       {/* Label */}
       <text x={x + w / 2} y={y + (line2 ? 24 : 26)} textAnchor="middle"
-        fontSize={10} fontFamily="Arial,sans-serif" fontWeight="700"
-        fill={active ? cfg.text : "#999"}>
+        fontSize={10} fontFamily="'Inter',system-ui,sans-serif" fontWeight="600"
+        fill={active ? "#ececec" : "#777"}>
         {line1}
       </text>
       {line2 && (
         <text x={x + w / 2} y={y + 36} textAnchor="middle"
-          fontSize={9.5} fontFamily="Arial,sans-serif" fontWeight="700"
-          fill={active ? cfg.text : "#999"}>
+          fontSize={9.5} fontFamily="'Inter',system-ui,sans-serif" fontWeight="600"
+          fill={active ? "#ececec" : "#777"}>
           {line2}
         </text>
       )}
@@ -136,46 +136,46 @@ function FnBox({ fn, x, y, active, onClick }) {
        onMouseEnter={() => setHot(true)}
        onMouseLeave={() => setHot(false)}>
 
-      {/* Drop shadow */}
+      {/* Glow */}
       {isHot && (
-        <rect x={x+2} y={y+3} width={FN_W} height={FN_H} rx={7}
-          fill={FN_C.header + "22"}/>
+        <rect x={x-1} y={y-1} width={FN_W+2} height={FN_H+2} rx={8}
+          fill="none" stroke={FN_C.header + "44"} strokeWidth={6}/>
       )}
 
       {/* Main box */}
       <rect x={x} y={y} width={FN_W} height={FN_H} rx={7}
-        fill={isHot ? FN_C.header : "#fff"}
-        stroke={FN_C.border}
-        strokeWidth={isHot ? 2.2 : 1.5}/>
+        fill={isHot ? FN_C.header + "22" : "#0f0f0f"}
+        stroke={isHot ? FN_C.header : FN_C.border}
+        strokeWidth={isHot ? 1.5 : 1}/>
 
       {/* Icon strip */}
-      <rect x={x} y={y} width={28} height={FN_H} rx={7} fill={FN_C.header + (isHot ? "ff" : "cc")}/>
-      <rect x={x+21} y={y} width={7} height={FN_H} fill={FN_C.header + (isHot ? "ff" : "cc")}/>
+      <rect x={x} y={y} width={28} height={FN_H} rx={7} fill={FN_C.header + (isHot ? "cc" : "88")}/>
+      <rect x={x+21} y={y} width={7} height={FN_H} fill={FN_C.header + (isHot ? "cc" : "88")}/>
 
       {/* ƒ glyph */}
       <text x={x+14} y={y + FN_H/2 + 5} textAnchor="middle"
-        fontSize={16} fontFamily="Arial,sans-serif" fontWeight="900"
-        fill="rgba(255,255,255,0.85)">
+        fontSize={16} fontFamily="'Inter',system-ui,sans-serif" fontWeight="700"
+        fill="rgba(255,255,255,0.9)">
         ƒ
       </text>
 
       {/* Keyword */}
       <text x={x + FN_W/2 + 8} y={y + 18} textAnchor="middle"
-        fontSize={8.5} fontFamily="Arial,sans-serif"
-        fill={isHot ? "rgba(255,255,255,0.7)" : FN_C.text} fontStyle="italic">
+        fontSize={8} fontFamily="'JetBrains Mono',monospace"
+        fill={isHot ? FN_C.text : FN_C.text + "88"} fontStyle="italic">
         {fn.kw}
       </text>
 
       {/* Label */}
       <text x={x + FN_W/2 + 8} y={y + (line2 ? 33 : 40)} textAnchor="middle"
-        fontSize={12} fontFamily="Arial,sans-serif" fontWeight="800"
-        fill={isHot ? "#fff" : "#111"}>
+        fontSize={12} fontFamily="'Inter',system-ui,sans-serif" fontWeight="700"
+        fill={isHot ? "#ececec" : "#b4b4b4"}>
         {line1}
       </text>
       {line2 && (
         <text x={x + FN_W/2 + 8} y={y + 48} textAnchor="middle"
-          fontSize={11.5} fontFamily="Arial,sans-serif" fontWeight="800"
-          fill={isHot ? "#fff" : "#111"}>
+          fontSize={11.5} fontFamily="'Inter',system-ui,sans-serif" fontWeight="700"
+          fill={isHot ? "#ececec" : "#b4b4b4"}>
           {line2}
         </text>
       )}
@@ -188,8 +188,8 @@ function FnBox({ fn, x, y, active, onClick }) {
 function SectionBg({ y, h, active }) {
   return (
     <rect x={0} y={y} width={TOTAL_W} height={h} rx={6}
-      fill={active ? "#f0faf4" : "#f9f9f9"}
-      stroke={active ? "#27ae6033" : "#eee"}
+      fill={active ? "rgba(16,185,129,0.05)" : "#0f0f0f"}
+      stroke={active ? "rgba(16,185,129,0.2)" : "#1a1a1a"}
       strokeWidth={1}/>
   );
 }
@@ -197,7 +197,7 @@ function SectionBg({ y, h, active }) {
 // ── Column headers ────────────────────────────────────────────────────────────
 
 function ColumnHeaders() {
-  const hStyle = { fontSize:9, fontFamily:"Arial,sans-serif", fontWeight:700,
+  const hStyle = { fontSize:8.5, fontFamily:"'JetBrains Mono',monospace", fontWeight:600,
     textTransform:"uppercase", letterSpacing:1 };
   return (
     <g>
@@ -215,31 +215,32 @@ function ColumnHeaders() {
 
 function DetailPanel({ section, onClose }) {
   const { fn, inputItems, outputItems } = section;
+  const lbl = { fontSize:9, color:"#444", textTransform:"uppercase",
+    letterSpacing:"0.08em", marginBottom:4, fontFamily:"'JetBrains Mono',monospace" };
+  const pill = (color, bg, border) => ({
+    fontSize:11, background:bg, color, border:`1px solid ${border}`,
+    borderRadius:5, padding:"2px 9px", fontFamily:"'Inter',system-ui,sans-serif",
+  });
+
   return (
-    <div style={{ margin:"8px 12px 12px", padding:"12px 18px",
-      background:"#fff", border:`2px solid ${FN_C.border}`,
-      borderRadius:7, boxShadow:"0 2px 12px rgba(0,0,0,0.08)",
-      fontFamily:"Arial,sans-serif", display:"flex", gap:20, flexWrap:"wrap" }}>
+    <div style={{ borderTop:`1px solid ${FN_C.border}`, padding:"12px 20px",
+      background:"#0f0f0f", display:"flex", gap:20, flexWrap:"wrap", flexShrink:0 }}>
 
       <div style={{ minWidth:160 }}>
-        <div style={{ fontSize:8.5, color:"#999", textTransform:"uppercase",
-          letterSpacing:1, marginBottom:3 }}>Function</div>
-        <div style={{ fontSize:15, fontWeight:900, color:"#111" }}>{fn.label}</div>
-        <code style={{ fontSize:10, color:FN_C.header, display:"block", marginTop:2 }}>
-          {fn.kw}
-        </code>
+        <div style={lbl}>Function</div>
+        <div style={{ fontSize:15, fontWeight:700, color:"#ececec", letterSpacing:"-0.02em",
+          fontFamily:"'Inter',system-ui,sans-serif" }}>{fn.label}</div>
+        <div style={{ fontSize:10, color:FN_C.header, marginTop:2,
+          fontFamily:"'JetBrains Mono',monospace" }}>{fn.kw}</div>
       </div>
 
       <div style={{ flex:1, minWidth:160 }}>
-        <div style={{ fontSize:8.5, color:"#999", textTransform:"uppercase",
-          letterSpacing:1, marginBottom:6 }}>Driven by requirements</div>
+        <div style={lbl}>Driven by requirements</div>
         <div style={{ display:"flex", flexWrap:"wrap", gap:4 }}>
           {inputItems.length === 0
-            ? <span style={{ fontSize:10, color:"#ccc" }}>none</span>
+            ? <span style={{ fontSize:11, color:"#333", fontFamily:"'JetBrains Mono',monospace" }}>none</span>
             : inputItems.map((inp, i) => (
-              <span key={i} style={{ fontSize:10, background:REQ_C.bg,
-                color:REQ_C.text, border:`1px solid ${REQ_C.border}44`,
-                borderRadius:3, padding:"2px 8px" }}>
+              <span key={i} style={pill(REQ_C.text, REQ_C.bg, REQ_C.border)}>
                 {inp.node.label}
               </span>
             ))
@@ -248,15 +249,12 @@ function DetailPanel({ section, onClose }) {
       </div>
 
       <div style={{ flex:1, minWidth:160 }}>
-        <div style={{ fontSize:8.5, color:"#999", textTransform:"uppercase",
-          letterSpacing:1, marginBottom:6 }}>Allocated to structure</div>
+        <div style={lbl}>Allocated to structure</div>
         <div style={{ display:"flex", flexWrap:"wrap", gap:4 }}>
           {outputItems.length === 0
-            ? <span style={{ fontSize:10, color:"#ccc" }}>none</span>
+            ? <span style={{ fontSize:11, color:"#333", fontFamily:"'JetBrains Mono',monospace" }}>none</span>
             : outputItems.map((out, i) => (
-              <span key={i} style={{ fontSize:10, background:STRUCT_C.bg,
-                color:STRUCT_C.text, border:`1px solid ${STRUCT_C.border}44`,
-                borderRadius:3, padding:"2px 8px" }}>
+              <span key={i} style={pill(STRUCT_C.text, STRUCT_C.bg, STRUCT_C.border)}>
                 {out.node.label}
               </span>
             ))
@@ -265,7 +263,7 @@ function DetailPanel({ section, onClose }) {
       </div>
 
       <button onClick={onClose} style={{ background:"none", border:"none",
-        cursor:"pointer", fontSize:18, color:"#ccc", alignSelf:"flex-start" }}>×</button>
+        cursor:"pointer", fontSize:18, color:"#333", alignSelf:"flex-start", lineHeight:1 }}>×</button>
     </div>
   );
 }
@@ -288,8 +286,8 @@ export default function FunctionView({ nodes, edges }) {
   if (!sections.length) {
     return (
       <div style={{ flex:1, display:"flex", alignItems:"center", justifyContent:"center",
-        color:"#bbb", fontFamily:"Arial,sans-serif", fontSize:13 }}>
-        No behaviour (action def / use case def) nodes found in the model.
+        color:"#333", fontFamily:"Inter,system-ui,sans-serif", fontSize:13 }}>
+        No behaviour nodes found — add <code style={{fontFamily:"JetBrains Mono,monospace",fontSize:11,background:"rgba(59,130,246,0.1)",color:"#93c5fd",padding:"1px 6px",borderRadius:4}}>action def</code> or <code style={{fontFamily:"JetBrains Mono,monospace",fontSize:11,background:"rgba(59,130,246,0.1)",color:"#93c5fd",padding:"1px 6px",borderRadius:4}}>use case def</code> to the model.
       </div>
     );
   }
@@ -298,8 +296,9 @@ export default function FunctionView({ nodes, edges }) {
     <div style={{ flex:1, display:"flex", flexDirection:"column", overflow:"hidden" }}>
 
       {/* SVG diagram */}
-      <div style={{ flex:1, overflow:"auto", padding:"0 12px" }}>
+      <div style={{ flex:1, overflow:"auto", padding:"16px" }}>
         <svg width={TOTAL_W} height={totalH + 20} style={{ display:"block" }}>
+          <rect width={TOTAL_W} height={totalH + 20} fill="#080808"/>
 
           <ColumnHeaders/>
 

@@ -15,7 +15,6 @@ import './App.css'
 const STORAGE_KEY = 'sysml-model-text'
 const SAVE_DELAY  = 800
 
-// sidebar: true → floating editor toggle available on this tab
 const TABS = [
   { id: 'metamodel',    label: 'Metamodel',    model: false, sidebar: false },
   { id: 'model',        label: 'Model',        model: true,  sidebar: false },
@@ -25,6 +24,22 @@ const TABS = [
   { id: 'requirements', label: 'Requirements', model: true,  sidebar: true  },
   { id: 'traceability', label: 'Traceability', model: true,  sidebar: true  },
 ]
+
+function Logo() {
+  return (
+    <div className="app-logo">
+      <svg className="app-logo-icon" width="22" height="22" viewBox="0 0 22 22" fill="none">
+        <path d="M11 2L20 7V15L11 20L2 15V7L11 2Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
+        <path d="M11 7L15.33 9.5V14.5L11 17L6.67 14.5V9.5L11 7Z" fill="currentColor" opacity="0.3"/>
+        <circle cx="11" cy="11" r="1.5" fill="currentColor"/>
+      </svg>
+      <div className="app-logo-text">
+        <span className="app-logo-name">SysML Explorer</span>
+        <span className="app-logo-version">v2.0</span>
+      </div>
+    </div>
+  )
+}
 
 export default function App() {
   const [text,        setText]       = useState(() => localStorage.getItem(STORAGE_KEY) ?? DEFAULT_TEXT)
@@ -44,8 +59,6 @@ export default function App() {
 
   const { nodes, edges, errors } = useMemo(() => parseSysML(text), [text])
 
-  // ── Text change: debounced localStorage save ─────────────────────────────────
-
   function handleTextChange(val) {
     const next = val ?? ''
     setText(next)
@@ -57,8 +70,6 @@ export default function App() {
     }, SAVE_DELAY)
   }
 
-  // ── File import ──────────────────────────────────────────────────────────────
-
   function handleImport(e) {
     const file = e.target.files[0]
     if (!file) return
@@ -67,8 +78,6 @@ export default function App() {
     reader.readAsText(file, 'utf-8')
     e.target.value = ''
   }
-
-  // ── File export ──────────────────────────────────────────────────────────────
 
   function handleExportSysML() {
     const blob = new Blob([text], { type: 'text/plain;charset=utf-8' })
@@ -80,8 +89,6 @@ export default function App() {
     URL.revokeObjectURL(url)
   }
 
-  // ── Reset ────────────────────────────────────────────────────────────────────
-
   function handleReset() {
     if (!window.confirm('Reset to the default example model?')) return
     clearTimeout(saveTimer.current)
@@ -89,8 +96,6 @@ export default function App() {
     setText(DEFAULT_TEXT)
     setSaveStatus('saved')
   }
-
-  // ── PNG export (Overview tab) ────────────────────────────────────────────────
 
   useEffect(() => {
     if (!exporting) return
@@ -123,7 +128,6 @@ export default function App() {
     return () => clearTimeout(id)
   }, [exporting])
 
-  // Close sidebar when switching away from a sidebar-capable tab
   function handleTabChange(id) {
     const tab = TABS.find(t => t.id === id)
     if (!tab?.sidebar) setEditorOpen(false)
@@ -135,7 +139,7 @@ export default function App() {
   return (
     <div className="app">
       <header className="app-header">
-        <span className="app-title">SysML v2 Explorer</span>
+        <Logo />
 
         <nav className="tab-bar">
           {TABS.map(tab => (
@@ -153,7 +157,7 @@ export default function App() {
           {activeTabDef?.model && (
             <>
               <span className={`save-status ${saveStatus}`}>
-                {saveStatus === 'saved' ? '✓ Saved' : '● Saving…'}
+                {saveStatus === 'saved' ? '✓ saved' : '● saving'}
               </span>
               <span className="header-sep" />
             </>
@@ -180,10 +184,8 @@ export default function App() {
 
       <main className="app-content">
 
-        {/* ── Metamodel ── */}
         {activeTab === 'metamodel' && <MetamodelDiagram modelNodes={nodes} text={text} />}
 
-        {/* ── Model (standalone editor tab) ── */}
         {activeTab === 'model' && (
           <div className="model-tab">
             <Editor
@@ -195,6 +197,7 @@ export default function App() {
               options={{
                 fontSize: 13,
                 lineHeight: 22,
+                fontFamily: "'JetBrains Mono', ui-monospace, monospace",
                 minimap: { enabled: true },
                 scrollBeyondLastLine: false,
                 wordWrap: 'on',
@@ -204,6 +207,7 @@ export default function App() {
                 cursorBlinking: 'smooth',
                 folding: true,
                 lineNumbers: 'on',
+                padding: { top: 12 },
               }}
             />
             {errors.length > 0 && (
@@ -216,11 +220,8 @@ export default function App() {
           </div>
         )}
 
-        {/* ── Diagram tabs (Overview + sidebar-capable tabs) ── */}
         {activeTabDef?.model && activeTab !== 'model' && (
           <div className="view-panel">
-
-            {/* Sliding editor sidebar — pushes content right */}
             {activeTabDef.sidebar && (
               <EditorSidebar
                 open={editorOpen}
@@ -232,14 +233,13 @@ export default function App() {
             )}
 
             <div className="view-content">
-              {/* Floating toggle — only visible when sidebar is closed */}
               {activeTabDef.sidebar && !editorOpen && (
                 <button
                   className="sidebar-toggle"
                   onClick={() => setEditorOpen(true)}
                   title="Open model editor"
                 >
-                  { }
+                  {'</>'}
                 </button>
               )}
 
