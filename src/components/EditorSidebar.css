@@ -1,0 +1,72 @@
+.editor-sidebar {
+  flex-shrink: 0;
+  width: 320px;
+  max-width: 0;
+  overflow: hidden;
+  background: #1e1e1e;
+  display: flex;
+  flex-direction: column;
+  border-right: 1.5px solid #444;
+  box-shadow: 6px 0 24px rgba(0, 0, 0, 0.35);
+  transition: max-width 0.2s ease;
+}
+
+.editor-sidebar.open {
+  max-width: 320px;
+}
+
+/* ── Sidebar header ── */
+
+.sidebar-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 10px 0 14px;
+  height: 36px;
+  background: #252526;
+  border-bottom: 1px solid #333;
+  flex-shrink: 0;
+}
+
+.sidebar-title {
+  font-size: 10px;
+  font-weight: 600;
+  color: #858585;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-family: ui-monospace, monospace;
+  flex: 1;
+}
+
+.sidebar-save-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  transition: background 0.3s;
+}
+.sidebar-save-dot.saved  { background: #27ae60; }
+.sidebar-save-dot.saving { background: #888; }
+
+.sidebar-close {
+  background: none;
+  border: none;
+  color: #858585;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 3px;
+  line-height: 1;
+  transition: color 0.15s, background 0.15s;
+}
+.sidebar-close:hover {
+  color: #ccc;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* ── Editor area ── */
+
+.sidebar-body {
+  flex: 1;
+  overflow: hidden;
+}
