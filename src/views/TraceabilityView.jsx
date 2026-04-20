@@ -1,5 +1,17 @@
 import { useState, useMemo } from "react";
 
+// Edge kind → display colour (used in chain/direct views)
+const EDGE_KIND_COLOR = {
+  composition:    "#4b5563",
+  specialization: "#3b82f6",
+  redefines:      "#60a5fa",
+  subsets:        "#93c5fd",
+  connection:     "#f59e0b",
+  satisfaction:   "#22c55e",
+  verification:   "#ec4899",
+  allocation:     "#8b5cf6",
+};
+
 const DOMAIN_CFG = {
   requirement: { label:"Requirements", color:"#93c5fd", bg:"rgba(59,130,246,0.1)",  border:"rgba(59,130,246,0.3)"  },
   behaviour:   { label:"Behaviour",    color:"#6ee7b7", bg:"rgba(16,185,129,0.1)",  border:"rgba(16,185,129,0.3)"  },
@@ -79,14 +91,15 @@ function NodeChip({ node }) {
 }
 
 function EdgeArrow({ edge }) {
+  const col = EDGE_KIND_COLOR[edge.kind] ?? "#444";
   return (
     <span style={{ display:"inline-flex", alignItems:"center", gap:3, whiteSpace:"nowrap" }}>
       <span style={{ color:"#2e2e2e", fontSize:11 }}>──</span>
-      <span style={{ fontSize:10, fontStyle:"italic", color:"#444",
+      <span style={{ fontSize:10, fontStyle:"italic", color:col,
         fontFamily:"'JetBrains Mono',monospace" }}>
         {edge.label || edge.kind}
       </span>
-      <span style={{ color:"#333", fontSize:12, fontWeight:700 }}>→</span>
+      <span style={{ color:col, fontSize:12, fontWeight:700 }}>→</span>
     </span>
   );
 }
@@ -311,7 +324,8 @@ function DirectView({ nodes, edges }) {
                   <td style={{ padding:"8px 14px" }}>{f && <NodeChip node={f}/>}</td>
                   <td style={{ padding:"8px 14px" }}>
                     <span style={{ display:"inline-flex", alignItems:"center", gap:6 }}>
-                      <span style={{ fontSize:10, fontStyle:"italic", color:"#555",
+                      <span style={{ fontSize:10, fontStyle:"italic",
+                        color: EDGE_KIND_COLOR[e.kind] ?? "#555",
                         fontFamily:"'JetBrains Mono',monospace" }}>
                         {e.label || e.kind}
                       </span>

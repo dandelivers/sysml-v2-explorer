@@ -1,4 +1,3 @@
-// Token types
 export const T = {
   KEYWORD:     'KEYWORD',
   IDENT:       'IDENT',
@@ -20,6 +19,7 @@ export const T = {
   STAR:        'STAR',        // *
   DOT:         'DOT',         // .
   DOTDOT:      'DOTDOT',      // ..
+  EQUALS:      'EQUALS',      // =
   EOF:         'EOF',
 };
 
@@ -30,6 +30,7 @@ const KEYWORDS = new Set([
   'readonly', 'derived', 'all', 'ordered', 'nonunique',
   'specializes', 'redefines', 'subsets', 'attribute', 'item',
   'satisfy', 'verify', 'allocate', 'expose',
+  'to', 'by', 'calc', 'constraint', 'occurrence', 'individual',
 ]);
 
 export function tokenize(input) {
@@ -45,7 +46,6 @@ export function tokenize(input) {
   while (i < len) {
     const ch = input[i];
 
-    // Whitespace
     if (ch === '\n') { line++; i++; continue; }
     if (/\s/.test(ch)) { i++; continue; }
 
@@ -66,7 +66,7 @@ export function tokenize(input) {
       continue;
     }
 
-    // String literals (single or double quoted)
+    // String literals
     if (ch === '"' || ch === "'") {
       const q = ch;
       i++;
@@ -75,12 +75,12 @@ export function tokenize(input) {
         if (input[i] === '\\') { i++; }
         str += input[i++];
       }
-      i++; // closing quote
+      i++;
       addToken(T.STRING, str);
       continue;
     }
 
-    // Multi-char operators (order matters — check longer first)
+    // Multi-char operators — longest match first
     if (ch === ':' && input[i + 1] === '>' && input[i + 2] === '>') {
       addToken(T.REDEFINES, ':>>'); i += 3; continue;
     }
@@ -96,14 +96,12 @@ export function tokenize(input) {
 
     // Single-char tokens
     const singles = {
-      '{': T.LBRACE, '}': T.RBRACE, ':': T.COLON, ';': T.SEMI,
-      ',': T.COMMA,  '[': T.LBRACKET, ']': T.RBRACKET,
-      '(': T.LPAREN, ')': T.RPAREN,   '@': T.AT,
-      '*': T.STAR,   '.': T.DOT,
+      '{': T.LBRACE,   '}': T.RBRACE,   ':': T.COLON,    ';': T.SEMI,
+      ',': T.COMMA,    '[': T.LBRACKET, ']': T.RBRACKET,
+      '(': T.LPAREN,   ')': T.RPAREN,   '@': T.AT,
+      '*': T.STAR,     '.': T.DOT,      '=': T.EQUALS,
     };
-    if (singles[ch]) {
-      addToken(singles[ch], ch); i++; continue;
-    }
+    if (singles[ch]) { addToken(singles[ch], ch); i++; continue; }
 
     // Identifiers and keywords
     if (/[a-zA-Z_]/.test(ch)) {
@@ -113,15 +111,19 @@ export function tokenize(input) {
       continue;
     }
 
-    // Numbers
+    // Numbers (integer or decimal)
     if (/[0-9]/.test(ch)) {
       let num = '';
       while (i < len && /[0-9]/.test(input[i])) num += input[i++];
+      if (input[i] === '.' && input[i + 1] !== '.') {
+        num += input[i++];
+        while (i < len && /[0-9]/.test(input[i])) num += input[i++];
+      }
       addToken(T.NUMBER, num);
       continue;
     }
 
-    // Skip unrecognised characters
+    // Skip unrecognised characters silently
     i++;
   }
 

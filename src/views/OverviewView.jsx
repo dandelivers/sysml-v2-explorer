@@ -14,7 +14,11 @@ const DOMAIN_ORDER = ["requirement", "behaviour", "structure", "interface", "con
 const EDGE_COLOR = {
   composition:    "#4b5563",
   specialization: "#3b82f6",
+  redefines:      "#60a5fa",
+  subsets:        "#93c5fd",
   connection:     "#f59e0b",
+  satisfaction:   "#22c55e",
+  verification:   "#ec4899",
   allocation:     "#8b5cf6",
 };
 

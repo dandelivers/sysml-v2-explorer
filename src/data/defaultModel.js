@@ -1,72 +1,79 @@
 export const DEFAULT_TEXT = `package 'Earth Observation Satellite' {
 
-  // ══════════════════════════════════════════════════════════════
+  // ════════════════════════════════════════════════════════════════
   // REQUIREMENTS
-  // ══════════════════════════════════════════════════════════════
+  // ════════════════════════════════════════════════════════════════
 
-  requirement def ImageResolutionReq {}
-  requirement def OrbitAltitudeReq {}
-  requirement def DataDownlinkReq {}
-  requirement def OperationalLifetimeReq {}
-  requirement def LaunchMassReq {}
+  abstract requirement def MissionRequirement {}
 
-  requirement def MissionRequirements {
-    requirement imageRes    : ImageResolutionReq;
-    requirement orbitAlt    : OrbitAltitudeReq;
-    requirement dataDownlink: DataDownlinkReq;
-    requirement lifetime    : OperationalLifetimeReq;
-    requirement launchMass  : LaunchMassReq;
+  requirement def ImageResolutionReq  :> MissionRequirement {}
+  requirement def OrbitAltitudeReq    :> MissionRequirement {}
+  requirement def DataDownlinkReq     :> MissionRequirement {}
+  requirement def OperationalLifetimeReq :> MissionRequirement {}
+  requirement def LaunchMassReq       :> MissionRequirement {}
+
+  abstract requirement def SystemRequirement :> MissionRequirement {}
+
+  requirement def AttitudeAccuracyReq  :> SystemRequirement {}
+  requirement def PowerBudgetReq       :> SystemRequirement {}
+  requirement def ThermalControlReq    :> SystemRequirement {}
+  requirement def CommsBandwidthReq    :> SystemRequirement {}
+  requirement def StorageCapacityReq   :> SystemRequirement {}
+
+  requirement def SolarArrayOutputReq  :> PowerBudgetReq {}
+  requirement def BatteryCapacityReq   :> PowerBudgetReq {}
+  requirement def TransponderFreqReq   :> CommsBandwidthReq {}
+  requirement def CameraResolutionReq  :> ImageResolutionReq {}
+  requirement def ReactionWheelTorqueReq :> AttitudeAccuracyReq {}
+
+
+  // ════════════════════════════════════════════════════════════════
+  // FUNCTIONS  (satisfy links requirement → action)
+  // ════════════════════════════════════════════════════════════════
+
+  action def CaptureImage {
+    satisfy ImageResolutionReq;
+    satisfy CameraResolutionReq;
+    allocate payload to PayloadSubsystem;
   }
 
-  requirement def AttitudeAccuracyReq {}
-  requirement def PowerBudgetReq {}
-  requirement def ThermalControlReq {}
-  requirement def CommsBandwidthReq {}
-  requirement def StorageCapacityReq {}
-
-  requirement def SystemRequirements {
-    requirement attitude : AttitudeAccuracyReq;
-    requirement power    : PowerBudgetReq;
-    requirement thermal  : ThermalControlReq;
-    requirement comms    : CommsBandwidthReq;
-    requirement storage  : StorageCapacityReq;
+  action def TransmitData {
+    satisfy DataDownlinkReq;
+    satisfy CommsBandwidthReq;
+    satisfy TransponderFreqReq;
+    allocate comms to CommunicationSubsystem;
   }
 
-  requirement def SolarArrayOutputReq {}
-  requirement def BatteryCapacityReq {}
-  requirement def TransponderFreqReq {}
-  requirement def CameraResolutionReq {}
-  requirement def ReactionWheelTorqueReq {}
+  action def ControlAttitude {
+    satisfy AttitudeAccuracyReq;
+    satisfy ReactionWheelTorqueReq;
+    allocate adcs to AttitudeControlSubsystem;
+  }
 
-  requirement def SubsystemRequirements {
-    requirement solarOutput : SolarArrayOutputReq;
-    requirement battCapacity: BatteryCapacityReq;
-    requirement transpFreq  : TransponderFreqReq;
-    requirement cameraRes   : CameraResolutionReq;
-    requirement rwTorque    : ReactionWheelTorqueReq;
+  action def ManagePower {
+    satisfy PowerBudgetReq;
+    satisfy SolarArrayOutputReq;
+    satisfy BatteryCapacityReq;
+    allocate power to PowerSubsystem;
+  }
+
+  action def ProcessTelemetry {
+    satisfy StorageCapacityReq;
+    allocate obc to OnBoardComputer;
   }
 
 
-  // ══════════════════════════════════════════════════════════════
-  // FUNCTIONS
-  // ══════════════════════════════════════════════════════════════
-
-  action def CaptureImage {}
-  action def TransmitData {}
-  action def ControlAttitude {}
-  action def ManagePower {}
-  action def ProcessTelemetry {}
-
-
-  // ══════════════════════════════════════════════════════════════
+  // ════════════════════════════════════════════════════════════════
   // STRUCTURE
-  // ══════════════════════════════════════════════════════════════
+  // ════════════════════════════════════════════════════════════════
+
+  abstract part def Subsystem {}
 
   part def SolarArray {}
   part def BatteryUnit {}
   part def PowerDistributionUnit {}
 
-  part def PowerSubsystem {
+  part def PowerSubsystem :> Subsystem {
     part solarArray : SolarArray;
     part battery    : BatteryUnit;
     part pdu        : PowerDistributionUnit;
@@ -76,7 +83,7 @@ export const DEFAULT_TEXT = `package 'Earth Observation Satellite' {
   part def Antenna {}
   part def CommandDecoder {}
 
-  part def CommunicationSubsystem {
+  part def CommunicationSubsystem :> Subsystem {
     part transponder : Transponder;
     part antenna     : Antenna;
     part cmdDecoder  : CommandDecoder;
@@ -86,7 +93,7 @@ export const DEFAULT_TEXT = `package 'Earth Observation Satellite' {
   part def ReactionWheel {}
   part def Magnetorquer {}
 
-  part def AttitudeControlSubsystem {
+  part def AttitudeControlSubsystem :> Subsystem {
     part starTracker   : StarTracker;
     part reactionWheel : ReactionWheel;
     part magnetorquer  : Magnetorquer;
@@ -96,7 +103,7 @@ export const DEFAULT_TEXT = `package 'Earth Observation Satellite' {
   part def DataStorage {}
   part def ImageProcessor {}
 
-  part def PayloadSubsystem {
+  part def PayloadSubsystem :> Subsystem {
     part camera      : ImagingCamera;
     part dataStorage : DataStorage;
     part imageProc   : ImageProcessor;
@@ -105,7 +112,7 @@ export const DEFAULT_TEXT = `package 'Earth Observation Satellite' {
   part def FlightSoftware {}
   part def TelemetryEncoder {}
 
-  part def OnBoardComputer {
+  part def OnBoardComputer :> Subsystem {
     part flightSoftware : FlightSoftware;
     part telemEncoder   : TelemetryEncoder;
   }
@@ -116,58 +123,6 @@ export const DEFAULT_TEXT = `package 'Earth Observation Satellite' {
     part adcs    : AttitudeControlSubsystem;
     part payload : PayloadSubsystem;
     part obc     : OnBoardComputer;
-  }
-
-
-  // ══════════════════════════════════════════════════════════════
-  // REQUIREMENT → FUNCTION CONNECTIONS
-  // ══════════════════════════════════════════════════════════════
-
-  connection def ImageReqToCapture {
-    end req : ImageResolutionReq;
-    end fn  : CaptureImage;
-  }
-  connection def CameraReqToCapture {
-    end req : CameraResolutionReq;
-    end fn  : CaptureImage;
-  }
-  connection def DownlinkReqToTransmit {
-    end req : DataDownlinkReq;
-    end fn  : TransmitData;
-  }
-  connection def AttitudeReqToControl {
-    end req : AttitudeAccuracyReq;
-    end fn  : ControlAttitude;
-  }
-  connection def PowerReqToManage {
-    end req : PowerBudgetReq;
-    end fn  : ManagePower;
-  }
-
-
-  // ══════════════════════════════════════════════════════════════
-  // FUNCTION → STRUCTURE CONNECTIONS
-  // ══════════════════════════════════════════════════════════════
-
-  connection def CaptureToPayload {
-    end fn     : CaptureImage;
-    end struct : PayloadSubsystem;
-  }
-  connection def TransmitToComms {
-    end fn     : TransmitData;
-    end struct : CommunicationSubsystem;
-  }
-  connection def ControlToADCS {
-    end fn     : ControlAttitude;
-    end struct : AttitudeControlSubsystem;
-  }
-  connection def PowerToSubsystem {
-    end fn     : ManagePower;
-    end struct : PowerSubsystem;
-  }
-  connection def TelemetryToOBC {
-    end fn     : ProcessTelemetry;
-    end struct : OnBoardComputer;
   }
 }
 `;
